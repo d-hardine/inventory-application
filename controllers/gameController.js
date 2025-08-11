@@ -6,19 +6,22 @@ async function getGames(req, res) {
     res.render('index', {games: games})
 }
 
-function createUsernameGet(req, res) {
-    res.render('newDb')
+async function createNewGameGet(req, res) {
+    const publishers = await db.getAllPublishers()
+    const genres = await db.getAllGenres()
+    res.render('newDb', {publishers: publishers, genres: genres})
 }
 
-async function createUsernamePost(req, res) {
-    const { username } = req.body
-    await db.insertUsername(username)
+async function createNewGamePost(req, res) {
+    const { gameName, releaseYear, publisher, genres } = req.body
+    console.log(gameName, releaseYear, publisher, genres)
+    await db.insertNewGame(gameName, releaseYear, publisher, genres)
     res.redirect('/')
 }
 
-async function deleteUsernamePost(req, res) {
+async function deleteGamePost(req, res) {
     const { id } = req.body
-    await db.deleteUsername(id)
+    await db.deleteGame(id)
     res.redirect('/')
 }
 
@@ -28,4 +31,4 @@ async function searchGet(req, res) {
     res.render('search', {usernames: searchResults})
 }
 
-module.exports = { getGames, createUsernameGet, createUsernamePost, deleteUsernamePost, searchGet }
+module.exports = { getGames, createNewGameGet, createNewGamePost, deleteGamePost, searchGet }

@@ -6,11 +6,37 @@
     <title>new database</title>
 </head>
 <body>
-    <div>new database</div>
+    <h1>Add New Game</h1>
     <br>
     <form action="/new" method="post">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username">
+        <div>
+            <label for="gameName">Game Name</label>
+            <input type="text" name="gameName" id="game-name" required>
+        </div>
+
+        <div>
+            <label for="releaseYear">Release Year</label>
+            <input type="number" name="releaseYear" id="release-year" min="1960" max="5000" required>
+        </div>
+
+        <div class="publishers-container">
+            <label for="publisher">publisher</label>
+            <br>
+            <% publishers.forEach(publisher => { %>
+                <input type="radio" id=<%= publisher.publisher %> name="publisher" value=<%= publisher.id %> required="true">
+                <label for=<%= publisher.publisher %>><%= publisher.publisher %></label>
+            <% }) %>
+        </div>
+
+        <div class="genre-container">
+            <label for="genre">genre</label>
+            <br>
+            <% genres.forEach(genre => { %>
+                <input type="checkbox" id=<%= genre.genre %> name="genres" value=<%= genre.id %> >
+                <label for=<%= genre.genre %>><%= genre.genre %></label>
+            <% }) %>
+        </div>
+
         <button type="submit">submit</button>
     </form>
 </body>

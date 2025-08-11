@@ -9,20 +9,29 @@
 <body>
     <h1>Search Bar</h1>
     <form action="/search" method="get">
-        <label for="search">Search: </label>
         <input type="text" name="search" id="seach">
         <button type="submit">search</button>
     </form>
     <br>
     <h1>Game List</h1>
-    <% games.forEach(game => { %>
-        <div><%= game.game_name %></div>
-        <form action="/" method="post">
-            <input type="hidden" name="id" id="id" value=<%= game.id %>>
-            <button>delete</button>
-        </form>
-    <% }) %>
+    <div class="inventory-container">
+        <div class="inventory-title">Game</div>
+        <div class="inventory-title">Release Year</div>
+        <div class="inventory-title">Genre</div>
+        <div class="inventory-title">Publisher</div>
+        <div class="inventory-title">Actions</div>
+        <% games.forEach(game => { %>
+            <div><%= game.game_name %></div>
+            <div><%= game.release_year %></div>
+            <div><%= game.genre %></div>
+            <div><%= game.publisher %></div>
+            <form action="/" method="post">
+                <input type="hidden" name="id" id="id" value=<%= game.id %>>
+                <button>delete</button>
+            </form>
+        <% }) %>
+    </div>
     <br>
-    <button><a href="/new">new user</a></button>
+    <button><a href="/new">Add New Game</a></button>
 </body>
 </html>
