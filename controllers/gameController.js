@@ -1,10 +1,9 @@
 const db = require('../db/queries')
 
-async function getUsernames(req, res) {
-    const usernames = await db.getAllUsernames()
-    //console.log(usernames)
-    //res.send("Usernames: " + usernames.map(user => user.username).join(", "))
-    res.render('index', {usernames: usernames})
+async function getGames(req, res) {
+    const games = await db.getAllGames()
+    //res.send("Games: " + games.map(game => game.game_name).join(", "))
+    res.render('index', {games: games})
 }
 
 function createUsernameGet(req, res) {
@@ -26,8 +25,7 @@ async function deleteUsernamePost(req, res) {
 async function searchGet(req, res) {
     const { search } = req.query
     const searchResults = await db.searchUsername(search)
-    console.log(searchResults)
     res.render('search', {usernames: searchResults})
 }
 
-module.exports = { getUsernames, createUsernameGet, createUsernamePost, deleteUsernamePost, searchGet }
+module.exports = { getGames, createUsernameGet, createUsernamePost, deleteUsernamePost, searchGet }

@@ -1,7 +1,7 @@
 const pool = require("./pool");
 
-async function getAllUsernames() {
-    const { rows } = await pool.query("SELECT * FROM usernames");
+async function getAllGames() {
+    const { rows } = await pool.query("SELECT * FROM games");
     return rows;
 }
 
@@ -10,14 +10,14 @@ async function insertUsername(username) {
 }
 
 async function deleteUsername(id) {
-    await pool.query("DELETE FROM usernames WHERE id=($1);", [id]);
+    await pool.query("DELETE FROM games WHERE id=($1);", [id]);
 }
 
 async function searchUsername(search) {
-    const { rows } = await pool.query("SELECT * FROM usernames WHERE username LIKE ($1);", [`%${search}%`]);
+    const { rows } = await pool.query("SELECT * FROM usernames WHERE username ILIKE ($1);", [`%${search}%`]);
     return rows
 }
 
 module.exports = {
-    getAllUsernames, insertUsername, deleteUsername, searchUsername
+    getAllGames, insertUsername, deleteUsername, searchUsername
 };
