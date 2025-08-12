@@ -14,6 +14,21 @@
     </form>
     <br>
     <h1>Game List</h1>
+    <form action="/filter" method="get">
+        <h2>Filter Publisher</h2>
+        <% publishers.forEach(publisher => { %>
+            <label for=<%= publisher.publisher %>><%= publisher.publisher %></label>
+            <input type="checkbox" id=<%= publisher.publisher %> name="publishers" value=<%= publisher.id %> >
+        <% }) %>
+        <h2>Filter Genre</h2>
+        <% genres.forEach(genre => { %>
+            <label for=<%= genre.genre %>><%= genre.genre %></label>
+            <input type="checkbox" id=<%= genre.genre %> name="genres" value=<%= genre.id %> >
+        <% }) %>
+        <br>
+        <button type="submit" value="test">Apply Filter</button>
+    </form>
+    <br>
     <div class="inventory-container">
         <div class="inventory-title">Game</div>
         <div class="inventory-title">Release Year</div>
@@ -26,7 +41,7 @@
             <div><%= game.genre %></div>
             <div><%= game.publisher %></div>
             <form action="/" method="post">
-                <input type="hidden" name="id" id="id" value=<%= game.id %>>
+                <input type="hidden" name="id" id="id" value= <%= game.id %>>
                 <button>delete</button>
             </form>
         <% }) %>

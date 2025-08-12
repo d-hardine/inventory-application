@@ -1,8 +1,9 @@
 const pool = require("./pool");
+const format = require('pg-format');
 
 async function getAllGames() {
     const { rows } = await pool.query(
-        `SELECT games.game_name, games.release_year, string_agg(genres.genre, ', ') as "genre", publishers.publisher FROM games
+        `SELECT games.id, games.game_name, games.release_year, string_agg(genres.genre, ', ') as "genre", publishers.publisher FROM games
             INNER JOIN games_genres ON games.id = games_genres.gameid
             INNER JOIN genres ON games_genres.genreid = genres.id
             INNER JOIN games_publishers ON games.id = games_publishers.gameid
@@ -28,20 +29,68 @@ async function insertNewGame(gameName, releaseYear, publisher, genres) {
     const { rows } = await pool.query(`SELECT * FROM games WHERE game_name=($1)`, [gameName])
     const newGameId = rows[0].id
     await pool.query("INSERT INTO games_publishers (publisherid, gameid) VALUES ($1, $2)", [publisher, newGameId]);
-    for(let i = 0; i < genres.length; i++) {
+    for(let i = 0; i < genres.length; i++)
         await pool.query("INSERT INTO games_genres (gameid, genreid) VALUES ($1, $2)", [newGameId, genres[i]]);
-    }
 }
 
 async function deleteGame(id) {
     await pool.query("DELETE FROM games WHERE id=($1);", [id]);
+    await pool.query("DELETE FROM games_publishers WHERE gameid=($1)", [id]);
+    await pool.query("DELETE FROM games_genres WHERE gameid=($1)", [id]);
 }
 
-async function searchUsername(search) {
-    const { rows } = await pool.query("SELECT * FROM usernames WHERE username ILIKE ($1);", [`%${search}%`]);
+async function filterGame(publishers, genres) {
+    if(publishers && !genres) {
+        const { rows } = await pool.query(format(
+            `SELECT games.id, games.game_name, games.release_year, string_agg(genres.genre, ', ') as "genre", publishers.publisher FROM games
+            INNER JOIN games_genres ON games.id = games_genres.gameid
+            INNER JOIN genres ON games_genres.genreid = genres.id
+            INNER JOIN games_publishers ON games.id = games_publishers.gameid
+            INNER JOIN publishers ON games_publishers.publisherid = publishers.id
+            WHERE games.id IN (SELECT gameid FROM games_publishers WHERE publisherid IN (%L))
+            GROUP BY games.id, publishers.publisher ORDER BY games.game_name
+        ;`, publishers))
+        return rows
+    } else if(!publishers && genres) {
+        const { rows } = await pool.query(format(
+            `SELECT games.id, games.game_name, games.release_year, string_agg(genres.genre, ', ') as "genre", publishers.publisher FROM games
+            INNER JOIN games_genres ON games.id = games_genres.gameid
+            INNER JOIN genres ON games_genres.genreid = genres.id
+            INNER JOIN games_publishers ON games.id = games_publishers.gameid
+            INNER JOIN publishers ON games_publishers.publisherid = publishers.id
+            WHERE games.id IN (SELECT gameid FROM games_genres WHERE genreid IN (%L))
+            GROUP BY games.id, publishers.publisher ORDER BY games.game_name
+        ;`, genres))
+        return rows
+    } else {
+        const { rows } = await pool.query(format(
+            `SELECT games.id, games.game_name, games.release_year, string_agg(genres.genre, ', ') as "genre", publishers.publisher FROM games
+            INNER JOIN games_genres ON games.id = games_genres.gameid
+            INNER JOIN genres ON games_genres.genreid = genres.id
+            INNER JOIN games_publishers ON games.id = games_publishers.gameid
+            INNER JOIN publishers ON games_publishers.publisherid = publishers.id
+            WHERE games.id IN (SELECT gameid FROM games_genres WHERE genreid IN (%L))
+            OR games.id IN (SELECT gameid FROM games_publishers WHERE publisherid IN (%L))
+            GROUP BY games.id, publishers.publisher ORDER BY games.game_name
+        ;`, genres, publishers))
+        return rows        
+    }
+}
+
+async function searchGame(search) {
+    const { rows } = await pool.query(
+        `SELECT games.id, games.game_name, games.release_year, string_agg(genres.genre, ', ') as "genre", publishers.publisher FROM games
+            INNER JOIN games_genres ON games.id = games_genres.gameid
+            INNER JOIN genres ON games_genres.genreid = genres.id
+            INNER JOIN games_publishers ON games.id = games_publishers.gameid
+            INNER JOIN publishers ON games_publishers.publisherid = publishers.id
+            WHERE games.game_name ILIKE ($1)
+            GROUP BY games.id, publishers.publisher ORDER BY games.game_name
+        ;`, [`%${search}%`]
+    );
     return rows
 }
 
 module.exports = {
-    getAllGames, getAllPublishers, getAllGenres, insertNewGame, deleteGame, searchUsername
+    getAllGames, getAllPublishers, getAllGenres, insertNewGame, deleteGame, filterGame, searchGame
 };

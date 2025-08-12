@@ -7,3 +7,8 @@
 .inventory-title {
     background-color: darkgrey;
 }
+
+.publisher-genre-container {
+    display: flex;
+    gap: 10px;
+}

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
     <title>new database</title>
 </head>
 <body>
@@ -13,30 +14,34 @@
             <label for="gameName">Game Name</label>
             <input type="text" name="gameName" id="game-name" required>
         </div>
-
         <div>
             <label for="releaseYear">Release Year</label>
             <input type="number" name="releaseYear" id="release-year" min="1960" max="5000" required>
         </div>
 
-        <div class="publishers-container">
-            <label for="publisher">publisher</label>
-            <br>
-            <% publishers.forEach(publisher => { %>
-                <input type="radio" id=<%= publisher.publisher %> name="publisher" value=<%= publisher.id %> required="true">
-                <label for=<%= publisher.publisher %>><%= publisher.publisher %></label>
-            <% }) %>
-        </div>
+        <div class="publisher-genre-container">
+            <div class="publishers-container">
+                <label for="publisher">publisher</label>
+                <br>
+                <% publishers.forEach(publisher => { %>
+                    <div>
+                        <input type="radio" id=<%= publisher.publisher %> name="publisher" value=<%= publisher.id %> required="true">
+                        <label for=<%= publisher.publisher %>><%= publisher.publisher %></label>
+                    </div>
+                <% }) %>
+            </div>
 
-        <div class="genre-container">
-            <label for="genre">genre</label>
-            <br>
-            <% genres.forEach(genre => { %>
-                <input type="checkbox" id=<%= genre.genre %> name="genres" value=<%= genre.id %> >
-                <label for=<%= genre.genre %>><%= genre.genre %></label>
-            <% }) %>
+            <div class="genre-container">
+                <label for="genre">genre</label>
+                <br>
+                <% genres.forEach(genre => { %>
+                    <div>
+                        <input type="checkbox" id=<%= genre.genre %> name="genres" value=<%= genre.id %> >
+                        <label for=<%= genre.genre %>><%= genre.genre %></label>
+                    </div>
+                <% }) %>
+            </div>
         </div>
-
         <button type="submit">submit</button>
     </form>
 </body>

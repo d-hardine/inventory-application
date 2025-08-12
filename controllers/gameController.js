@@ -2,8 +2,9 @@ const db = require('../db/queries')
 
 async function getGames(req, res) {
     const games = await db.getAllGames()
-    //res.send("Games: " + games.map(game => game.game_name).join(", "))
-    res.render('index', {games: games})
+    const publishers = await db.getAllPublishers()
+    const genres = await db.getAllGenres()
+    res.render('index', {games: games, publishers: publishers, genres: genres})
 }
 
 async function createNewGameGet(req, res) {
@@ -14,7 +15,6 @@ async function createNewGameGet(req, res) {
 
 async function createNewGamePost(req, res) {
     const { gameName, releaseYear, publisher, genres } = req.body
-    console.log(gameName, releaseYear, publisher, genres)
     await db.insertNewGame(gameName, releaseYear, publisher, genres)
     res.redirect('/')
 }
@@ -25,10 +25,19 @@ async function deleteGamePost(req, res) {
     res.redirect('/')
 }
 
-async function searchGet(req, res) {
-    const { search } = req.query
-    const searchResults = await db.searchUsername(search)
-    res.render('search', {usernames: searchResults})
+async function filterGameGet(req, res) {
+    const { publishers, genres } = req.query
+    const filteredGames = await db.filterGame(publishers, genres)
+    const filteredPublishers = await db.getAllPublishers()
+    const filteredGenres = await db.getAllGenres()
+    res.render('filter', {games: filteredGames, publishers: filteredPublishers, genres: filteredGenres})
+    //res.redirect('/')
 }
 
-module.exports = { getGames, createNewGameGet, createNewGamePost, deleteGamePost, searchGet }
+async function searchGet(req, res) {
+    const { search } = req.query
+    const searchResults = await db.searchGame(search)
+    res.render('search', {searchGames: searchResults})
+}
+
+module.exports = { getGames, createNewGameGet, createNewGamePost, deleteGamePost, filterGameGet, searchGet }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <title>Search Results</title>
+    <title>Game Inventory</title>
 </head>
 <body>
     <h1>Search Bar</h1>
@@ -12,14 +12,31 @@
         <input type="text" name="search" id="seach">
         <button type="submit">search</button>
     </form>
-    <h1>Search Results</h1>
+    <br>
+    <h1>Filtered Game List</h1>
+    <form action="/filter" method="get">
+        <h2>Filter Publisher</h2>
+        <% publishers.forEach(publisher => { %>
+            <label for=<%= publisher.publisher %>><%= publisher.publisher %></label>
+            <input type="checkbox" id=<%= publisher.publisher %> name="publishers" value=<%= publisher.id %> >
+        <% }) %>
+        <h2>Filter Genre</h2>
+        <% genres.forEach(genre => { %>
+            <label for=<%= genre.genre %>><%= genre.genre %></label>
+            <input type="checkbox" id=<%= genre.genre %> name="genres" value=<%= genre.id %> >
+        <% }) %>
+        <br>
+        <button type="submit" value="test">Apply Filter</button>
+        <a href="/"><button type="button">Reset Filter</button></a>
+    </form>
+    <br>
     <div class="inventory-container">
         <div class="inventory-title">Game</div>
         <div class="inventory-title">Release Year</div>
         <div class="inventory-title">Genre</div>
         <div class="inventory-title">Publisher</div>
         <div class="inventory-title">Actions</div>
-        <% searchGames.forEach(game => { %>
+        <% games.forEach(game => { %>
             <div><%= game.game_name %></div>
             <div><%= game.release_year %></div>
             <div><%= game.genre %></div>
@@ -30,5 +47,7 @@
             </form>
         <% }) %>
     </div>
+    <br>
+    <button><a href="/new">Add New Game</a></button>
 </body>
 </html>
