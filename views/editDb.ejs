@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Edit Game</title>
+</head>
+<body>
+    <h1>Edit Game "<%= editedGame[0].game_name %>"</h1>
+    <br>
+    <form action="/:gameId" method="post">
+        <div>
+            <label for="gameName">Game Name</label>
+            <input type="text" name="gameName" id="game-name" value="<%- editedGame[0].game_name %>" required>
+        </div>
+        <div>
+            <label for="releaseYear">Release Year</label>
+            <input type="number" name="releaseYear" id="release-year" min="1960" max="5000" value=<%= editedGame[0].release_year %> required>
+        </div>
+
+        <div class="publisher-genre-container">
+            <div class="publishers-container">
+                <label for="publisher">publisher</label>
+                <br>
+                <% publishers.forEach(publisher => { %>
+                    <% if (publisher.id == fetchEditedPublisher[0].publisherid) { %>
+                        <div>
+                            <input type="radio" id=<%= publisher.publisher %> name="publisher" value=<%= publisher.id %> required="true" checked="checked">
+                            <label for=<%= publisher.publisher %>><%= publisher.publisher %></label>
+                        </div>
+                    <% } else { %>
+                        <div>
+                            <input type="radio" id=<%= publisher.publisher %> name="publisher" value=<%= publisher.id %> required="true">
+                            <label for=<%= publisher.publisher %>><%= publisher.publisher %></label>
+                        </div>
+                    <% } %>
+                <% }) %>
+            </div>
+
+            <div class="genre-container">
+                <label for="genre">genre</label>
+                <br>
+                <% genres.forEach(genre => { %>
+                    <% if (genre.id === fetchEditedGenre[0].genreid) { %>
+                        <div>
+                            <input type="checkbox" id=<%= genre.genre %> name="genres" value=<%= genre.id %> checked>
+                            <label for=<%= genre.genre %>><%= genre.genre %></label>
+                        </div>
+                        <% if (fetchEditedGenre.length > 1) { %>
+                            <% fetchEditedGenre.shift() %>
+                        <% } %>
+                    <% } else { %>
+                        <div>
+                            <input type="checkbox" id=<%= genre.genre %> name="genres" value=<%= genre.id %> >
+                            <label for=<%= genre.genre %>><%= genre.genre %></label>
+                        </div>
+                    <% } %>
+                <% }) %>
+            </div>
+        </div>
+        <input type="hidden" name="id" id="id" value= <%= editedGame[0].id %>>
+        <button type="submit">edit game</button>
+    </form>
+</body>
+</html>

@@ -40,10 +40,13 @@
             <div><%= game.release_year %></div>
             <div><%= game.genre %></div>
             <div><%= game.publisher %></div>
-            <form action="/" method="post">
-                <input type="hidden" name="id" id="id" value= <%= game.id %>>
-                <button>delete</button>
-            </form>
+            <div class="buttons-container">
+                <a href="/<%= game.id %>"><button>edit</button></a>
+                <form action="/" method="post">
+                    <input type="hidden" name="id" id="id" value= <%= game.id %>>
+                    <button>delete</button>
+                </form>
+            </div>
         <% }) %>
     </div>
     <br>
