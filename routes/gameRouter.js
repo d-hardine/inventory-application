@@ -6,9 +6,9 @@ gameRouter.get("/", gameController.getGames)
 gameRouter.post("/", gameController.deleteGamePost)
 gameRouter.get("/filter", gameController.filterGameGet)
 gameRouter.get("/new", gameController.createNewGameGet)
-gameRouter.post("/new", gameController.createNewGamePost)
+gameRouter.post("/new", gameController.validateGame, gameController.createNewGamePost)
 gameRouter.get("/search", gameController.searchGet)
 gameRouter.get("/:id", gameController.editGameGet)
-gameRouter.post("/:id", gameController.editGamePost)
+gameRouter.post("/:id", gameController.validateGame, gameController.editGamePost)
 
 module.exports = gameRouter

@@ -21,7 +21,7 @@
 
         <div class="publisher-genre-container">
             <div class="publishers-container">
-                <label for="publisher">publisher</label>
+                <label for="publisher"><b>Publisher</b></label>
                 <br>
                 <% publishers.forEach(publisher => { %>
                     <div>
@@ -32,7 +32,7 @@
             </div>
 
             <div class="genre-container">
-                <label for="genre">genre</label>
+                <label for="genre"><b>Genre</b></label>
                 <br>
                 <% genres.forEach(genre => { %>
                     <div>
@@ -42,6 +42,7 @@
                 <% }) %>
             </div>
         </div>
+        <%- include("partials/errors.ejs") %>
         <button type="submit">submit</button>
     </form>
 </body>

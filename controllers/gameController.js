@@ -1,4 +1,7 @@
 const db = require('../db/queries')
+const { body, validationResult } = require('express-validator')
+
+const validateGame = body('genres').notEmpty().withMessage('At least pick one genre before submit')
 
 async function getGames(req, res) {
     const games = await db.getAllGames()
@@ -14,9 +17,17 @@ async function createNewGameGet(req, res) {
 }
 
 async function createNewGamePost(req, res) {
-    const { gameName, releaseYear, publisher, genres } = req.body
-    await db.insertNewGame(gameName, releaseYear, publisher, genres)
-    res.redirect('/')
+    const results = validationResult(req)
+    if(results.isEmpty()) {
+        const { gameName, releaseYear, publisher, genres } = req.body
+        await db.insertNewGame(gameName, releaseYear, publisher, genres)
+        return res.redirect('/')
+    } else { //if error, which is genres checkboxes not checked at least one
+        const publishers = await db.getAllPublishers()
+        const genres = await db.getAllGenres()
+        res.status(400).render('newDb', {publishers: publishers, genres: genres, error: results.array()})
+    }
+
 }
 
 async function deleteGamePost(req, res) {
@@ -36,14 +47,34 @@ async function editGameGet(req, res) {
         fetchEditedPublisher: fetchEditedPublisher,
         fetchEditedGenre: fetchEditedGenre,
         publishers: publishers,
-        genres: genres}
-    )
+        genres: genres
+    })
 }
 
 async function editGamePost(req, res) {
-    const { gameName, releaseYear, publisher, genres, id } = req.body
-    await db.updateGame(gameName, releaseYear, publisher, genres, id)
-    res.redirect('/')
+    const results = validationResult(req)
+    if(results.isEmpty()) {
+        const { gameName, releaseYear, publisher, genres, id } = req.body
+        await db.updateGame(gameName, releaseYear, publisher, genres, id)
+        res.redirect('/')
+    }
+    else { //if error, which is genres checkboxes not checked at least one
+        const editedGame = await db.fetchEditedGame(req.body.id)
+        const fetchEditedPublisher = await db.fetchEditedPublisher(req.body.id)
+        const fetchEditedGenre = await db.fetchEditedGenre(req.body.id)
+        const publishers = await db.getAllPublishers()
+        const genres = await db.getAllGenres()
+        res.status(400).render('editDb', {publishers: publishers, genres: genres, error: results.array()})
+        res.render('editDb', {
+            editedGame: editedGame,
+            fetchEditedPublisher: fetchEditedPublisher,
+            fetchEditedGenre: fetchEditedGenre,
+            publishers: publishers,
+            genres: genres,
+            error: results.array()
+        })
+    }
+ 
 }
 
 async function filterGameGet(req, res) {
@@ -61,6 +92,7 @@ async function searchGet(req, res) {
 }
 
 module.exports = {
+    validateGame,
     getGames,
     createNewGameGet,
     createNewGamePost,
